@@ -1,6 +1,9 @@
 package checkers
 
-import "errors"
+import (
+	"errors"
+	"strings"
+)
 
 type board [8][8]rune
 
@@ -38,4 +41,15 @@ func NewBoard() board{
 		}
 	} 
 	return board(array)
+}
+
+func (b board) String() string{
+	var sb strings.Builder
+	sb.Grow(64)
+	for i:= 0; i < 8; i++{
+		for j:=0; j<8; j++{
+			sb.WriteRune(b[i][j])
+		}
+	}
+	return sb.String()
 }
