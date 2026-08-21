@@ -26,3 +26,16 @@ func (s *square)Coordinate() coordinate{
 	return coordinate(c)
 }
 
+func NewBoard() board{
+	array  := [8][8]rune{}
+	for i := 0; i < 8; i+=2{
+		for j:=i%2; j < 8; j+=2{
+			if i < 3{
+				array[i][j] = 'w'
+			} else if i >5{
+				array[i][j] = 'b'
+			}
+		}
+	} 
+	return board(array)
+}
