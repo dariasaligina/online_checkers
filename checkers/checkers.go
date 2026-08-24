@@ -31,12 +31,12 @@ func (s *square)Coordinate() coordinate{
 
 func NewBoard() board{
 	array  := [8][8]rune{}
-	for i := 0; i < 8; i+=2{
+	for i := 0; i < 8; i+=1{
 		for j:=i%2; j < 8; j+=2{
 			if i < 3{
-				array[i][j] = 'w'
-			} else if i >5{
 				array[i][j] = 'b'
+			} else if i >4{
+				array[i][j] = 'w'
 			}
 		}
 	} 
@@ -45,11 +45,28 @@ func NewBoard() board{
 
 func (b board) String() string{
 	var sb strings.Builder
-	sb.Grow(64)
+	sb.Grow(170)
 	for i:= 0; i < 8; i++{
+		sb.WriteByte(byte('0'+8-i))
+		sb.WriteByte('|')
 		for j:=0; j<8; j++{
-			sb.WriteRune(b[i][j])
+			if b[i][j] == 0 { 
+				if (i+j)%2 == 1{
+					sb.WriteRune(' ')
+				} else{
+					sb.WriteRune('-')
+				}
+			} else {
+				sb.WriteRune(b[i][j])
+			}
+			sb.WriteByte('|')
 		}
+		sb.WriteRune('\n')
+	}
+	sb.WriteString(" |")
+	for letter :='a'; letter<='h'; letter++{
+		sb.WriteByte(byte(letter));
+		sb.WriteByte('|')
 	}
 	return sb.String()
 }
