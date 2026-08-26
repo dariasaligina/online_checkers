@@ -50,12 +50,10 @@ func (b board) String() string{
 		sb.WriteByte(byte('0'+8-i))
 		sb.WriteByte('|')
 		for j:=0; j<8; j++{
-			if b[i][j] == 0 { 
-				if (i+j)%2 == 1{
-					sb.WriteRune(' ')
-				} else{
-					sb.WriteRune('-')
-				}
+			if b[i][j] == 0 && (i+j)%2 == 1{ 
+				sb.WriteRune(' ')
+			}else if b[i][j] == 0{
+				sb.WriteRune('-')
 			} else {
 				sb.WriteRune(b[i][j])
 			}
