@@ -99,10 +99,36 @@ func (b *board) GetCoordinate(c coordinate) (rune,error){
 	return b[c[0]][c[1]], nil
 }
 
+func (b *board) SetCoordinate(c coordinate, r rune) (error){
+	if c.isOutsideBoard() {
+		return errors.New("coordinate is outside board")
+	}
+	b[c[0]][c[1]] = r
+	return nil
+}
+
 func (c coordinate) add(i, j int8) coordinate{
 	c[0] += i
 	c[1] += j
 	return c
+}
+
+func (b *board) MakeMove(m move) error {
+	checker, err := b.GetCoordinate(m[0].Coordinate())
+	if (err != nil){
+		return err
+	}
+	if checker == 0{
+		return errors.New("Invalid move")
+	}
+	for _, sq := range m {
+		err := b.SetCoordinate(sq.Coordinate(), 0)
+		if err != nil{
+			return err
+		}
+	}
+	b.SetCoordinate(m[len(m)-1].Coordinate(), checker) 
+	return nil
 }
 
 func (b *board) SimpleMoves(s square) []move{
@@ -137,6 +163,37 @@ func (b *board) SimpleMoves(s square) []move{
 			ans = append(ans, move{s, sq1})
 		}
 		}
+	case 'W', 'B':{
+		mv := []square{s}
+		var i int8;
+		for i=1; b.isEmpty(coord.add(i,i)); i++{
+			coord1 := coord.add(i,i)
+			sq1, _ := coord1.Squere()
+			mv = append(mv, sq1);
+			ans = append(ans, move(mv))
+		}
+		mv = []square{s}
+		for i=1; b.isEmpty(coord.add(i,-i)); i++{
+			coord1 := coord.add(i,-i)
+			sq1, _ := coord1.Squere()
+			mv = append(mv, sq1);
+			ans = append(ans, move(mv))
+		}
+		mv = []square{s}
+		for i=1; b.isEmpty(coord.add(-i,-i)); i++{
+			coord1 := coord.add(-i,-i)
+			sq1, _ := coord1.Squere()
+			mv = append(mv, sq1);
+			ans = append(ans, move(mv))
+		}
+		mv = []square{s}
+		for i=1; b.isEmpty(coord.add(-i,i)); i++{
+			coord1 := coord.add(-i,i)
+			sq1, _ := coord1.Squere()
+			mv = append(mv, sq1);
+			ans = append(ans, move(mv))
+		}
+	}
 	}
 	return ans
 }
