@@ -99,12 +99,22 @@ func (b *board) GetCoordinate(c coordinate) (rune,error){
 	return b[c[0]][c[1]], nil
 }
 
+func (b *board) GetSquare(s square) (rune,error){
+	c := s.Coordinate()
+	return b.GetCoordinate(c)
+}
+
 func (b *board) SetCoordinate(c coordinate, r rune) (error){
 	if c.isOutsideBoard() {
 		return errors.New("coordinate is outside board")
 	}
 	b[c[0]][c[1]] = r
 	return nil
+}
+
+func (b *board) SetSquare(s square, r rune) (error){
+	c := s.Coordinate()
+	return b.SetCoordinate(c, r)
 }
 
 func (c coordinate) add(i, j int8) coordinate{
