@@ -92,6 +92,11 @@ func (b *board) isEmptyCoordinate(c coordinate) bool{
 	return ans == 0
 }
 
+func (b *board) isEmptySquare(s square) bool{
+	c := s.Coordinate()
+	return b.isEmptyCoordinate(c)
+}
+
 func (b *board) GetCoordinate(c coordinate) (rune,error){
 	if c.isOutsideBoard() {
 		return 0, errors.New("coordinate is outside board")
