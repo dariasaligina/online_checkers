@@ -84,7 +84,7 @@ func (c *coordinate) isOutsideBoard() bool{
 	return  false
 }
 
-func (b *board) isEmpty(c coordinate) bool{
+func (b *board) isEmptyCoordinate(c coordinate) bool{
 	ans, err := b.GetCoordinate(c)
 	if err != nil {
 		return false
@@ -140,24 +140,24 @@ func (b *board) SimpleMoves(s square) []move{
 	}
 	switch val{
 	case 'w':{
-		if b.isEmpty(coord.add(1,1)){
+		if b.isEmptyCoordinate(coord.add(1,1)){
 			coord1 := coord.add(1,1)
 			sq1, _ := coord1.Squere()
 			ans = append(ans, move{s, sq1})
 		}
-		if b.isEmpty(coord.add(1,-1)){
+		if b.isEmptyCoordinate(coord.add(1,-1)){
 			coord1 := coord.add(1,-1)
 			sq1, _ := coord1.Squere()
 			ans = append(ans, move{s, sq1})
 		}
 	}
 	case 'b':{
-		if b.isEmpty(coord.add(-1,1)){
+		if b.isEmptyCoordinate(coord.add(-1,1)){
 			coord1 := coord.add(-1,1)
 			sq1, _ := coord1.Squere()
 			ans = append(ans, move{s, sq1})
 		}
-		if b.isEmpty(coord.add(-1,-1)){
+		if b.isEmptyCoordinate(coord.add(-1,-1)){
 			coord1 := coord.add(-1,-1)
 			sq1, _ := coord1.Squere()
 			ans = append(ans, move{s, sq1})
@@ -166,28 +166,28 @@ func (b *board) SimpleMoves(s square) []move{
 	case 'W', 'B':{
 		mv := []square{s}
 		var i int8;
-		for i=1; b.isEmpty(coord.add(i,i)); i++{
+		for i=1; b.isEmptyCoordinate(coord.add(i,i)); i++{
 			coord1 := coord.add(i,i)
 			sq1, _ := coord1.Squere()
 			mv = append(mv, sq1);
 			ans = append(ans, move(mv))
 		}
 		mv = []square{s}
-		for i=1; b.isEmpty(coord.add(i,-i)); i++{
+		for i=1; b.isEmptyCoordinate(coord.add(i,-i)); i++{
 			coord1 := coord.add(i,-i)
 			sq1, _ := coord1.Squere()
 			mv = append(mv, sq1);
 			ans = append(ans, move(mv))
 		}
 		mv = []square{s}
-		for i=1; b.isEmpty(coord.add(-i,-i)); i++{
+		for i=1; b.isEmptyCoordinate(coord.add(-i,-i)); i++{
 			coord1 := coord.add(-i,-i)
 			sq1, _ := coord1.Squere()
 			mv = append(mv, sq1);
 			ans = append(ans, move(mv))
 		}
 		mv = []square{s}
-		for i=1; b.isEmpty(coord.add(-i,i)); i++{
+		for i=1; b.isEmptyCoordinate(coord.add(-i,i)); i++{
 			coord1 := coord.add(-i,i)
 			sq1, _ := coord1.Squere()
 			mv = append(mv, sq1);
