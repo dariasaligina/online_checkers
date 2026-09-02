@@ -128,6 +128,11 @@ func (c coordinate) add(i, j int8) coordinate{
 	return c
 }
 
+func (s square) add(i, j int8) (square, error){
+	c := s.Coordinate().add(i, j)
+	return c.Squere()
+}
+
 func (b *board) MakeMove(m move) error {
 	checker, err := b.GetCoordinate(m[0].Coordinate())
 	if (err != nil){
