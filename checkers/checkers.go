@@ -134,7 +134,7 @@ func (s square) add(i, j int8) (square, error){
 }
 
 func (b *board) MakeMove(m move) error {
-	checker, err := b.GetCoordinate(m[0].Coordinate())
+	checker, err := b.GetSquare(m[0])
 	if (err != nil){
 		return err
 	}
@@ -142,12 +142,12 @@ func (b *board) MakeMove(m move) error {
 		return errors.New("Invalid move")
 	}
 	for _, sq := range m {
-		err := b.SetCoordinate(sq.Coordinate(), 0)
+		err := b.SetSquare(sq, 0)
 		if err != nil{
 			return err
 		}
 	}
-	b.SetCoordinate(m[len(m)-1].Coordinate(), checker) 
+	b.SetSquare(m[len(m)-1], checker) 
 	return nil
 }
 
