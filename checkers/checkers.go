@@ -18,50 +18,50 @@ func NewSquare(s string) (square, error) {
 	if len(s) != 2 {
 		return square(""), errors.New("Invalid coordinate format. Expected 2 characters (e.g., 'e4').")
 	}
-	if s[0]<'a' || s[0]>'h'{
+	if s[0] < 'a' || s[0] > 'h' {
 		return square(""), errors.New("Invalid column. Use letters from 'a' to 'h'.")
 	}
-	if s[1]<'1' || s[1]>'8'{
+	if s[1] < '1' || s[1] > '8' {
 		return square(""), errors.New("Invalid row. Use numbers from '1' to '8'")
 	}
 	return square(s), nil
 }
 
-func (s *square)Coordinate() coordinate{
-	c := [2]int8 {int8((*s)[1]-'1'), int8((*s)[0]-'a'),}
+func (s *square) Coordinate() coordinate {
+	c := [2]int8{int8((*s)[1] - '1'), int8((*s)[0] - 'a')}
 	return coordinate(c)
 }
 
-func (c *coordinate)Squere() (square, error){
+func (c *coordinate) Squere() (square, error) {
 	s := string(rune('a'+c[1])) + string(rune('1'+c[0]))
-	sq, err :=  NewSquare(s)
+	sq, err := NewSquare(s)
 	return sq, err
 }
 
-func NewBoard() board{
-	array  := [8][8]rune{}
-	for i := 0; i < 8; i+=1{
-		for j:=i%2; j < 8; j+=2{
-			if i < 3{
+func NewBoard() board {
+	array := [8][8]rune{}
+	for i := 0; i < 8; i += 1 {
+		for j := i % 2; j < 8; j += 2 {
+			if i < 3 {
 				array[i][j] = 'w'
-			} else if i >4{
+			} else if i > 4 {
 				array[i][j] = 'b'
 			}
 		}
-	} 
+	}
 	return board(array)
 }
 
-func (b board) String() string{
+func (b board) String() string {
 	var sb strings.Builder
 	sb.Grow(170)
-	for i:= 7; i >= 0; i--{
-		sb.WriteByte(byte('1'+i))
+	for i := 7; i >= 0; i-- {
+		sb.WriteByte(byte('1' + i))
 		sb.WriteByte('|')
-		for j:=0; j<8; j++{
-			if b[i][j] == 0 && (i+j)%2 == 1{ 
+		for j := 0; j < 8; j++ {
+			if b[i][j] == 0 && (i+j)%2 == 1 {
 				sb.WriteRune(' ')
-			}else if b[i][j] == 0{
+			} else if b[i][j] == 0 {
 				sb.WriteRune('-')
 			} else {
 				sb.WriteRune(b[i][j])
@@ -71,20 +71,20 @@ func (b board) String() string{
 		sb.WriteRune('\n')
 	}
 	sb.WriteString(" |")
-	for letter :='a'; letter<='h'; letter++{
-		sb.WriteByte(byte(letter));
+	for letter := 'a'; letter <= 'h'; letter++ {
+		sb.WriteByte(byte(letter))
 		sb.WriteByte('|')
 	}
 	return sb.String()
 }
-func (c *coordinate) isOutsideBoard() bool{
-	if c[0] > 7 || c[0]< 0 || c[1]>7 || c[1]<0{
+func (c *coordinate) isOutsideBoard() bool {
+	if c[0] > 7 || c[0] < 0 || c[1] > 7 || c[1] < 0 {
 		return true
 	}
-	return  false
+	return false
 }
 
-func (b *board) isEmptyCoordinate(c coordinate) bool{
+func (b *board) isEmptyCoordinate(c coordinate) bool {
 	ans, err := b.GetCoordinate(c)
 	if err != nil {
 		return false
@@ -92,24 +92,24 @@ func (b *board) isEmptyCoordinate(c coordinate) bool{
 	return ans == 0
 }
 
-func (b *board) isEmptySquare(s square) bool{
+func (b *board) isEmptySquare(s square) bool {
 	c := s.Coordinate()
 	return b.isEmptyCoordinate(c)
 }
 
-func (b *board) GetCoordinate(c coordinate) (rune,error){
+func (b *board) GetCoordinate(c coordinate) (rune, error) {
 	if c.isOutsideBoard() {
 		return 0, errors.New("coordinate is outside board")
 	}
 	return b[c[0]][c[1]], nil
 }
 
-func (b *board) GetSquare(s square) (rune,error){
+func (b *board) GetSquare(s square) (rune, error) {
 	c := s.Coordinate()
 	return b.GetCoordinate(c)
 }
 
-func (b *board) SetCoordinate(c coordinate, r rune) (error){
+func (b *board) SetCoordinate(c coordinate, r rune) error {
 	if c.isOutsideBoard() {
 		return errors.New("coordinate is outside board")
 	}
@@ -117,103 +117,116 @@ func (b *board) SetCoordinate(c coordinate, r rune) (error){
 	return nil
 }
 
-func (b *board) SetSquare(s square, r rune) (error){
+func (b *board) SetSquare(s square, r rune) error {
 	c := s.Coordinate()
 	return b.SetCoordinate(c, r)
 }
 
-func (c coordinate) add(i, j int8) coordinate{
+func (c coordinate) add(i, j int8) coordinate {
 	c[0] += i
 	c[1] += j
 	return c
 }
 
-func (s square) add(i, j int8) (square, error){
+func (s square) add(i, j int8) (square, error) {
 	c := s.Coordinate().add(i, j)
 	return c.Squere()
 }
 
 func (b *board) MakeMove(m move) error {
+	if len(m) == 0 {
+		return errors.New("Invalid length of move: 0")
+	}
 	checker, err := b.GetSquare(m[0])
-	if (err != nil){
+	if err != nil {
 		return err
 	}
-	if checker == 0{
+	if checker == 0 {
 		return errors.New("Invalid move")
 	}
 	for _, sq := range m {
 		err := b.SetSquare(sq, 0)
-		if err != nil{
+		if err != nil {
 			return err
 		}
 	}
-	b.SetSquare(m[len(m)-1], checker) 
+	b.SetSquare(m[len(m)-1], checker)
 	return nil
 }
 
-func (b *board) SimpleMoves(s square) []move{
-	coord := s.Coordinate()
+func (b *board) SimpleMoves(s square) []move {
 	ans := make([]move, 0)
-	val, err := b.GetCoordinate(coord)
-	if err != nil{
+	val, err := b.GetSquare(s)
+	if err != nil {
 		log.Fatal(err)
 	}
-	switch val{
-	case 'w':{
-		if b.isEmptyCoordinate(coord.add(1,1)){
-			coord1 := coord.add(1,1)
-			sq1, _ := coord1.Squere()
-			ans = append(ans, move{s, sq1})
+	switch val {
+	case 'w':
+		{
+			newSquare, err := s.add(1, 1)
+			if err == nil && b.isEmptySquare(newSquare) {
+				ans = append(ans, move{s, newSquare})
+			}
+			newSquare, err = s.add(1, -1)
+			if err == nil && b.isEmptySquare(newSquare) {
+				ans = append(ans, move{s, newSquare})
+			}
 		}
-		if b.isEmptyCoordinate(coord.add(1,-1)){
-			coord1 := coord.add(1,-1)
-			sq1, _ := coord1.Squere()
-			ans = append(ans, move{s, sq1})
+	case 'b':
+		{
+			newSquare, err := s.add(-1, 1)
+			if err == nil && b.isEmptySquare(newSquare) {
+				ans = append(ans, move{s, newSquare})
+			}
+			newSquare, err = s.add(-1, -1)
+			if err == nil && b.isEmptySquare(newSquare) {
+				ans = append(ans, move{s, newSquare})
+			}
 		}
-	}
-	case 'b':{
-		if b.isEmptyCoordinate(coord.add(-1,1)){
-			coord1 := coord.add(-1,1)
-			sq1, _ := coord1.Squere()
-			ans = append(ans, move{s, sq1})
+	case 'W', 'B':
+		{
+			mv := []square{s}
+			for i := int8(1); true; i++ {
+				newSquare, err := s.add(i, i)
+				if err == nil && b.isEmptySquare(newSquare) {
+					mv = append(mv, newSquare)
+					ans = append(ans, move(mv))
+				} else {
+					break
+				}
+			}
+			mv = []square{s}
+			for i := int8(1); true; i++ {
+				newSquare, err := s.add(i, -i)
+				if err == nil && b.isEmptySquare(newSquare) {
+					mv = append(mv, newSquare)
+					ans = append(ans, move(mv))
+				} else {
+					break
+				}
+			}
+			mv = []square{s}
+			for i := int8(1); true; i++ {
+				newSquare, err := s.add(-i, i)
+				if err == nil && b.isEmptySquare(newSquare) {
+					mv = append(mv, newSquare)
+					ans = append(ans, move(mv))
+				} else {
+					break
+				}
+			}
+			mv = []square{s}
+			for i := int8(1); true; i++ {
+				newSquare, err := s.add(-i, -i)
+				if err == nil && b.isEmptySquare(newSquare) {
+					mv = append(mv, newSquare)
+					ans = append(ans, move(mv))
+				} else {
+					break
+				}
+			}
+
 		}
-		if b.isEmptyCoordinate(coord.add(-1,-1)){
-			coord1 := coord.add(-1,-1)
-			sq1, _ := coord1.Squere()
-			ans = append(ans, move{s, sq1})
-		}
-		}
-	case 'W', 'B':{
-		mv := []square{s}
-		var i int8;
-		for i=1; b.isEmptyCoordinate(coord.add(i,i)); i++{
-			coord1 := coord.add(i,i)
-			sq1, _ := coord1.Squere()
-			mv = append(mv, sq1);
-			ans = append(ans, move(mv))
-		}
-		mv = []square{s}
-		for i=1; b.isEmptyCoordinate(coord.add(i,-i)); i++{
-			coord1 := coord.add(i,-i)
-			sq1, _ := coord1.Squere()
-			mv = append(mv, sq1);
-			ans = append(ans, move(mv))
-		}
-		mv = []square{s}
-		for i=1; b.isEmptyCoordinate(coord.add(-i,-i)); i++{
-			coord1 := coord.add(-i,-i)
-			sq1, _ := coord1.Squere()
-			mv = append(mv, sq1);
-			ans = append(ans, move(mv))
-		}
-		mv = []square{s}
-		for i=1; b.isEmptyCoordinate(coord.add(-i,i)); i++{
-			coord1 := coord.add(-i,i)
-			sq1, _ := coord1.Squere()
-			mv = append(mv, sq1);
-			ans = append(ans, move(mv))
-		}
-	}
 	}
 	return ans
 }
