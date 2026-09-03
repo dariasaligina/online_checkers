@@ -122,6 +122,48 @@ func (b *board) SetSquare(s square, r rune) error {
 	return b.SetCoordinate(c, r)
 }
 
+func (b *board) IsCheckerCoordinate(c coordinate) (bool,error){
+	val, err := b.GetCoordinate(c)
+	if err!= nil{
+		return false, err
+	}
+	return val == 'w' || val == 'b', nil
+}
+
+func (b *board) IsCheckerSquare(s square) (bool,error){
+	c := s.Coordinate()
+	return b.IsCheckerCoordinate(c)
+}
+
+func (b *board) IsKingCoordinate(c coordinate) (bool,error){
+	val, err := b.GetCoordinate(c)
+	if err!= nil{
+		return false, err
+	}
+	return val == 'W' || val == 'B', nil
+}
+
+func (b *board) IsKingSquare(s square) (bool,error){
+	return b.IsKingCoordinate(s.Coordinate())
+}
+
+func (b *board) AreSameColorCoordinate(c1,c2 coordinate)(bool,error){
+	val1, err := b.GetCoordinate(c1)
+	if err!= nil{
+		return false, err
+	}
+	val2, err := b.GetCoordinate(c2)
+	if err!= nil{
+		return false, err
+	}
+	return strings.EqualFold(string(val1), string(val2)), nil
+}
+
+func (b *board) AreSameColorSquare(s1,s2 square)(bool,error){
+	return b.AreSameColorCoordinate(s1.Coordinate(), s2.Coordinate())
+}
+
+
 func (c coordinate) add(i, j int8) coordinate {
 	c[0] += i
 	c[1] += j
